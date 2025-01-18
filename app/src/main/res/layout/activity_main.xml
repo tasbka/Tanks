@@ -10,9 +10,25 @@
 
     <ImageView
         android:id="@+id/myTank"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:srcCompat="@drawable/tank"
-        tools:layout_editor_absoluteX="98dp"
-        tools:layout_editor_absoluteY="173dp" />
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        app:srcCompat="@drawable/tank" />
+    <LinearLayout
+        android:id="@+id/materials_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_gravity="end"
+        android:layout_margin="8dp">
+
+    <ImageView
+        android:id="@+id/editor_brick"
+        android:layout_margin="8dp"
+        android:src="@drawable/brick"
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size">
+    </ImageView>
+    </LinearLayout>
 </FrameLayout>
