@@ -3,27 +3,21 @@ package com.example.battletanks
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_DPAD_DOWN
-import android.view.KeyEvent.KEYCODE_DPAD_LEFT
-import android.view.KeyEvent.KEYCODE_DPAD_RIGHT
-import android.view.KeyEvent.KEYCODE_DPAD_UP
+import android.view.KeyEvent.*
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
-import android.widget.FrameLayout
-import androidx.core.view.marginLeft
-import androidx.core.view.marginTop
+import android.view.View.*
 import com.example.battletanks.enums.Direction.DOWN
 import com.example.battletanks.enums.Direction.UP
 import com.example.battletanks.enums.Direction.LEFT
 import com.example.battletanks.enums.Direction.RIGHT
 import com.example.battletanks.databinding.ActivityMainBinding
-import com.example.battletanks.drawers.ElementsDrawer
-import com.example.battletanks.drawers.GridDrawer
+import com.example.battletanks.drawers.*
 import com.example.battletanks.enums.Direction
 import com.example.battletanks.enums.Material
 import com.example.battletanks.models.Coordinate
+import com.example.battletanks.models.Element
+import com.example.battletanks.models.Tank
 
 const val CELL_SIZE = 50
 
@@ -31,6 +25,15 @@ lateinit var  binding: ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private var editMode = false
+    private val playerTank = Tank(
+        Element(
+            R.id.myTank,
+            Material.PLAYER_TANK,
+            Coordinate(0,0),
+            Material.PLAYER_TANK.width,
+            Material.PLAYER_TANK.height
+        ), UP
+    )
     private val gridDrawer by lazy {
         GridDrawer(binding.container)
     }
@@ -39,8 +42,16 @@ class MainActivity : AppCompatActivity() {
         ElementsDrawer(binding.container)
     }
 
+    private val bulletDrawer by lazy{
+        BulletDrawer(binding.container)
+    }
 
-
+    private val levelStorage by lazy {
+        LevelStorage(this)
+    }
+    private val enemyDrawer by lazy {
+        EnemyDrawer(binding.container, elementDrawer.elementsOnContainer)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -54,26 +65,39 @@ class MainActivity : AppCompatActivity() {
             elementDrawer.currentMaterial = Material.CONCRETE
         }
         binding.editorGrass.setOnClickListener { elementDrawer.currentMaterial = Material.GRASS }
+        binding.editorEagle.setOnClickListener { elementDrawer.currentMaterial = Material.EAGLE }
         binding.container.setOnTouchListener { _, event ->
             elementDrawer.onTouchContainer(event.x, event.y)
             return@setOnTouchListener true
         }
+        elementDrawer.drawElementsList(levelStorage.loadLevel())
+        hideSettings()
+        elementDrawer.elementsOnContainer.add(playerTank.element)
     }
 
     private fun switchEditMode()
     {
         if (editMode)
         {
-            gridDrawer.removeGrid()
-            binding.materialsContainer.visibility = INVISIBLE
+            showSettings()
 
         } else {
-            gridDrawer.drawGrid()
-            binding.materialsContainer.visibility = VISIBLE
+            hideSettings()
         }
         editMode = !editMode
     }
 
+    private fun showSettings ()
+    {
+        gridDrawer.drawGrid()
+        binding.materialsContainer.visibility = VISIBLE
+    }
+
+    private fun hideSettings()
+    {
+        gridDrawer.removeGrid()
+        binding.materialsContainer.visibility = INVISIBLE
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean
     {
@@ -88,51 +112,56 @@ class MainActivity : AppCompatActivity() {
                 switchEditMode()
                 return true
             }
+            R.id.menu_save -> {
+                levelStorage.saveLevel(elementDrawer.elementsOnContainer)
+                return true
+            }
+            R.id.menu_play -> {
+                startTheGame()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun startTheGame(){
+        if (editMode){
+            return
+        }
+        enemyDrawer.startEnemyCreation()
+        enemyDrawer.moveEnemyTanks()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when(keyCode)
         {
-            KEYCODE_DPAD_UP -> move(UP)
-            KEYCODE_DPAD_DOWN -> move(DOWN)
-            KEYCODE_DPAD_LEFT -> move(LEFT)
-            KEYCODE_DPAD_RIGHT -> move(RIGHT)
+            KEYCODE_DPAD_UP -> move(
+                UP,
+            )
+            KEYCODE_DPAD_DOWN -> move(
+                DOWN,
+            )
+            KEYCODE_DPAD_LEFT -> move(
+                LEFT,
+            )
+            KEYCODE_DPAD_RIGHT -> move(
+                RIGHT,
+            )
+
+            KEYCODE_SPACE -> bulletDrawer.makeBulletMove(
+                binding.myTank,
+                playerTank.direction,
+                elementDrawer.elementsOnContainer
+            )
         }
         return super.onKeyDown(keyCode, event)
     }
 
-    private fun move(direction: Direction) {
-        when(direction)
-        {
-            UP->{
-                binding.myTank.rotation = 0f
-                if (binding.myTank.marginTop > 0) {
-                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).topMargin += -CELL_SIZE
-                }
-            }
-            DOWN->{
-                binding.myTank.rotation = 180f
-                if (binding.myTank.marginTop + binding.myTank.height < binding.container.height / CELL_SIZE * CELL_SIZE) {
-                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).topMargin += CELL_SIZE
-                }
-            }
-            LEFT->{
-                binding.myTank.rotation = 270f
-                if (binding.myTank.marginLeft > 0) {
-                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin -= CELL_SIZE
-                }
-            }
-            RIGHT->{
-                binding.myTank.rotation = 90f
-                if (binding.myTank.marginLeft + binding.myTank.width < binding.container.width / CELL_SIZE * CELL_SIZE) {
-                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin += CELL_SIZE
-                }
-            }
-        }
-        binding.container.removeView(binding.myTank)
-        binding.container.addView(binding.myTank)
+    private fun move (direction:Direction)
+    {
+        playerTank.move(direction, binding.container,elementDrawer.elementsOnContainer)
     }
+
 }
 
