@@ -9,23 +9,34 @@ import android.view.KeyEvent.KEYCODE_DPAD_RIGHT
 import android.view.KeyEvent.KEYCODE_DPAD_UP
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import androidx.core.view.marginLeft
 import androidx.core.view.marginTop
-import com.example.battletanks.Direction.DOWN
-import com.example.battletanks.Direction.UP
-import com.example.battletanks.Direction.LEFT
-import com.example.battletanks.Direction.RIGHT
+import com.example.battletanks.enums.Direction.DOWN
+import com.example.battletanks.enums.Direction.UP
+import com.example.battletanks.enums.Direction.LEFT
+import com.example.battletanks.enums.Direction.RIGHT
 import com.example.battletanks.databinding.ActivityMainBinding
+import com.example.battletanks.drawers.ElementsDrawer
+import com.example.battletanks.drawers.GridDrawer
+import com.example.battletanks.enums.Direction
+import com.example.battletanks.enums.Material
+import com.example.battletanks.models.Coordinate
 
 const val CELL_SIZE = 50
 
 lateinit var  binding: ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private var editMode =false
-    private val gridDrawer by lazy{
-        GridDrawer(this)
+    private var editMode = false
+    private val gridDrawer by lazy {
+        GridDrawer(binding.container)
+    }
+
+    private  val elementDrawer by lazy {
+        ElementsDrawer(binding.container)
     }
 
 
@@ -35,6 +46,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         supportActionBar?.title = "Menu"
+
+        binding.editorClear.setOnClickListener { elementDrawer.currentMaterial = Material.EMPTY }
+        binding.editorBrick.setOnClickListener { elementDrawer.currentMaterial = Material.BRICK }
+        binding.editorConcrete.setOnClickListener {
+            elementDrawer.currentMaterial = Material.CONCRETE
+        }
+        binding.editorGrass.setOnClickListener { elementDrawer.currentMaterial = Material.GRASS }
+        binding.container.setOnTouchListener { _, event ->
+            elementDrawer.onTouchContainer(event.x, event.y)
+            return@setOnTouchListener true
+        }
     }
 
     private fun switchEditMode()
@@ -42,8 +64,11 @@ class MainActivity : AppCompatActivity() {
         if (editMode)
         {
             gridDrawer.removeGrid()
+            binding.materialsContainer.visibility = INVISIBLE
+
         } else {
             gridDrawer.drawGrid()
+            binding.materialsContainer.visibility = VISIBLE
         }
         editMode = !editMode
     }
@@ -95,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             LEFT->{
                 binding.myTank.rotation = 270f
                 if (binding.myTank.marginLeft > 0) {
-                (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin -= CELL_SIZE
+                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin -= CELL_SIZE
                 }
             }
             RIGHT->{
