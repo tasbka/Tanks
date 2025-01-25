@@ -9,6 +9,9 @@ import android.view.KeyEvent.KEYCODE_DPAD_RIGHT
 import android.view.KeyEvent.KEYCODE_DPAD_UP
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import androidx.core.view.marginLeft
 import androidx.core.view.marginTop
@@ -42,8 +45,11 @@ class MainActivity : AppCompatActivity() {
         if (editMode)
         {
             gridDrawer.removeGrid()
+            binding.materialsContainer.visibility = INVISIBLE
+
         } else {
             gridDrawer.drawGrid()
+            binding.materialsContainer.visibility = VISIBLE
         }
         editMode = !editMode
     }
@@ -95,7 +101,7 @@ class MainActivity : AppCompatActivity() {
             LEFT->{
                 binding.myTank.rotation = 270f
                 if (binding.myTank.marginLeft > 0) {
-                (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin -= CELL_SIZE
+                    (binding.myTank.layoutParams as FrameLayout.LayoutParams).leftMargin -= CELL_SIZE
                 }
             }
             RIGHT->{
