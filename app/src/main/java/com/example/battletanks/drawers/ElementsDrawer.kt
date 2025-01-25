@@ -28,6 +28,7 @@ private val elementsOnContainer = mutableListOf<Element>()
         {
             Material.EMPTY -> {
 
+
             }
 
             Material.BRICK -> view.setImageResource(R.drawable.brick)
