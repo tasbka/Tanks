@@ -71,7 +71,7 @@ class EnemyDrawer (private  val container: FrameLayout, private val elements: Mu
                 removeInconsistentTanks()
                 tanks.forEach {
                     it.move(it.direction, container, elements)
-                    it.bulletDrawer.makeBulletMove()
+                    it.bulletDrawer.makeBulletMove(it,elements)
                 }
                 Thread.sleep(400)
             }

@@ -7,6 +7,7 @@ import android.widget.ImageView
 import com.example.battletanks.CELL_SIZE
 import com.example.battletanks.R
 import com.example.battletanks.enums.Direction
+import com.example.battletanks.enums.Material
 import com.example.battletanks.models.Coordinate
 import com.example.battletanks.models.Element
 import com.example.battletanks.models.Tank
@@ -34,7 +35,7 @@ class BulletDrawer(private val container: FrameLayout) {
         val currentDirection = tank.direction
         if (!checkBulletThreadDlive()) {
             bulletThread = Thread( Runnable {
-                val view = container.findViewById<View>(this.tank.element.viewId)
+                val view = container.findViewById<View>(this.tank.element.viewId)?: return@Runnable
                 val bullet = createBullet(view, currentDirection)
                 while (bullet.checkViewCanMoveThroungBorder(
                         Coordinate(bullet.top, bullet.left)
@@ -97,19 +98,19 @@ class BulletDrawer(private val container: FrameLayout) {
                 removeElementsAndStopBullet(element, elementsOnContainer)
             }
         }
-    }
 
     private fun removeElementsAndStopBullet(
         element: Element?,
         elementsOnContainer: MutableList<Element>
-    )
-    {
+    ) {
         if (element != null) {
-            if (element.material.bulletCanGoThrough)
-            {
+            if (element.material.bulletCanGoThrough) {
                 return
             }
-            if (tank.)
+            if (tank.element.material == Material.ENEMY_TANK && element.material == Material.ENEMY_TANK) {
+            stopBullet()
+                return
+            }
             if (element.material.simpleBulletCanDestroy)
             {
                 stopBullet()

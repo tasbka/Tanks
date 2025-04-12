@@ -34,7 +34,8 @@ class MainActivity : AppCompatActivity() {
             Element(
                 material = Material.PLAYER_TANK,
                 coordinate = getPlayerTankCoordinate(elementWidth, elementHeight)
-            ), UP
+            ), UP,
+            BulletDrawer(binding.container)
         )
         return playerTank
     }
@@ -115,6 +116,9 @@ class MainActivity : AppCompatActivity() {
         }
         binding.editorGrass.setOnClickListener { elementDrawer.currentMaterial = Material.GRASS }
         binding.container.setOnTouchListener { _, event ->
+            if (!editMode){
+                return@setOnTouchListener true
+            }
             elementDrawer.onTouchContainer(event.x, event.y)
             return@setOnTouchListener true
         }
@@ -214,8 +218,7 @@ class MainActivity : AppCompatActivity() {
             )
 
             KEYCODE_SPACE -> playerTank.bulletDrawer.makeBulletMove(
-                binding.container.findViewById(playerTank.element.viewId),
-                playerTank.direction,
+                playerTank,
                 elementDrawer.elementsOnContainer
             )
         }
