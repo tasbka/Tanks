@@ -50,6 +50,7 @@ class ElementsDrawer(val container: FrameLayout) {
             currentMaterial = element.material
             drawElement(element)
         }
+        currentMaterial = Material.EMPTY
     }
 
     private fun replaceView(coordinate: Coordinate){
@@ -99,10 +100,10 @@ class ElementsDrawer(val container: FrameLayout) {
 
     private fun removeUnwantedInstances()
     {
-        if (currentMaterial.elementsAboutOnScreen !=0)
+        if (currentMaterial.elementsAmountOnScreen !=0)
         {
             val erasingElements = elementsOnContainer.filter { it.material == currentMaterial }
-            if (erasingElements.size >= currentMaterial.elementsAboutOnScreen)
+            if (erasingElements.size >= currentMaterial.elementsAmountOnScreen)
             {
                 eraseView(erasingElements[0].coordinate)
             }

@@ -17,7 +17,7 @@ class EnemyDrawer (private  val container: FrameLayout, private val elements: Mu
     private  val  respawnList: List<Coordinate>
     private var enemyAmount = 0
     private var currentCoordinate:Coordinate
-    private val tanks = mutableListOf<Tank>()
+    val tanks = mutableListOf<Tank>()
 
     init {
         respawnList = getRespawnList()
@@ -56,10 +56,9 @@ class EnemyDrawer (private  val container: FrameLayout, private val elements: Mu
             material = Material.ENEMY_TANK,
             coordinate = currentCoordinate,
             ), Direction.DOWN,
-        BulletDrawer(container)
+        BulletDrawer(container, elements, this)
         )
         enemyTank.element.drawElement(container)
-        elements.add(enemyTank.element)
         tanks.add(enemyTank)
     }
 
@@ -71,7 +70,7 @@ class EnemyDrawer (private  val container: FrameLayout, private val elements: Mu
                 removeInconsistentTanks()
                 tanks.forEach {
                     it.move(it.direction, container, elements)
-                    it.bulletDrawer.makeBulletMove()
+                    it.bulletDrawer.makeBulletMove(it)
                 }
                 Thread.sleep(400)
             }

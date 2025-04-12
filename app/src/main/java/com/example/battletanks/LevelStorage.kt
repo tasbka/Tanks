@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import com.google.gson.Gson
-import com.example.battletanks.models.Element
 import com.google.gson.reflect.TypeToken
+import com.example.battletanks.models.Element
 
 const val KEY_LEVEL = "key_level"
 class LevelStorage (context: Context){
@@ -23,6 +23,16 @@ class LevelStorage (context: Context){
     {
         val levelFromPrefs = prefs.getString(KEY_LEVEL, null)?: return  null
         val type= object : TypeToken<List<Element>>(){}.type
-            return gson.fromJson(levelFromPrefs, type)
+        val elementsFromStorage: List<Element> = gson.fromJson(levelFromPrefs, type)
+        val elementsWithNewIds = mutableListOf<Element>()
+        elementsFromStorage.forEach{
+            elementsWithNewIds.add(
+                Element(
+                    material = it.material,
+                    coordinate = it.coordinate
+                )
+            )
+        }
+            return  elementsWithNewIds
         }
     }

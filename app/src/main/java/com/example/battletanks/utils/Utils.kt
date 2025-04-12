@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import com.example.battletanks.CELL_SIZE
 import com.example.battletanks.models.Element
+import com.example.battletanks.models.Tank
 
 fun View.checkViewCanMoveThroungBorder(coordinate: Coordinate): Boolean {
     return coordinate.top >= 0 &&
@@ -35,6 +36,10 @@ fun getElementByCoordinates(
         }
     }
     return null
+}
+
+fun gerTankByCoordinates(coordinate: Coordinate, tankList: List<Tank>): Element? {
+    return getElementByCoordinates(coordinate, tankList.map { it.element })
 }
 
 fun Element.drawElement(container: FrameLayout) {
