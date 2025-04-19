@@ -1,6 +1,5 @@
 package com.example.battletanks.enums
 
-import android.content.SharedPreferences.Editor
 import com.example.battletanks.R
 
 const val CELL_SIMPLE_ELEMENT = 1
@@ -15,15 +14,13 @@ enum class Material(
     val elementsAmountOnScreen: Int,
     val width: Int,
     val height: Int,
-    val image: Int?
-
-    ) {
-        EMPTY(true,true,true, 0,0,0,null),
+    val image: Int?)
+{
+    EMPTY(true,true,true, 0,0,0,null),
     BRICK(false,false,true,0, CELL_SIMPLE_ELEMENT,CELL_SIMPLE_ELEMENT, R.drawable.brick),
     CONCRETE(false,false,false,0,CELL_SIMPLE_ELEMENT,CELL_SIMPLE_ELEMENT,R.drawable.concrete),
     GRASS(true,true,false, 0,CELL_SIMPLE_ELEMENT,CELL_SIMPLE_ELEMENT, R.drawable.grass),
     EAGLE(false,false,true,1,CELLS_EAGLE_WIDTH,CELLS_EAGLE_HEIGHT,R.drawable.eagle),
     ENEMY_TANK(false,false,true,0, CELLS_TANKS_SIZE, CELLS_TANKS_SIZE,R.drawable.enemy_tank),
-    ENEMY_TANK_RESPAWN(true,true,false,3,CELLS_TANKS_SIZE, CELLS_TANKS_SIZE,R.drawable.enemy_tank),
     PLAYER_TANK(false,false,true,1,CELLS_TANKS_SIZE, CELLS_TANKS_SIZE,R.drawable.tank)
 }
