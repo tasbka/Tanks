@@ -3,31 +3,29 @@ package com.example.battletanks.drawers
 import android.graphics.Color
 import android.view.View
 import android.widget.FrameLayout
-import com.example.battletanks.CELL_SIZE
-import com.example.battletanks.binding
+import com.example.battletanks.activities.CELL_SIZE
+import com.example.battletanks.activities.binding
 
-class GridDrawer(private val context: FrameLayout) {
+class GridDrawer(private val container: FrameLayout) {
     private val allLines = mutableListOf<View>()
-
-    fun removeGrid()
-    {
+    fun removeGrid(){
         val container = binding.container
-        allLines.forEach{
+        allLines.forEach(){
             container.removeView(it)
         }
     }
-
     fun drawGrid() {
         val container = binding.container
         drawHorizontalLines(container)
         drawVerticalLines(container)
+
     }
 
     private fun drawHorizontalLines(container: FrameLayout?) {
         var topMargin = 0
         while (topMargin <= container!!.height) {
             val horizontalLine = View(container.context)
-            val layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,1)
+            val layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 1)
             topMargin += CELL_SIZE
             layoutParams.topMargin = topMargin
             horizontalLine.layoutParams = layoutParams
@@ -36,11 +34,12 @@ class GridDrawer(private val context: FrameLayout) {
             container.addView(horizontalLine)
         }
     }
+
     private fun drawVerticalLines(container: FrameLayout?) {
         var leftMargin = 0
         while (leftMargin <= container!!.width) {
             val verticalLine = View(container.context)
-            val layoutParams = FrameLayout.LayoutParams(1,  FrameLayout.LayoutParams.MATCH_PARENT)
+            val layoutParams = FrameLayout.LayoutParams(1, FrameLayout.LayoutParams.MATCH_PARENT)
             leftMargin += CELL_SIZE
             layoutParams.leftMargin = leftMargin
             verticalLine.layoutParams = layoutParams
